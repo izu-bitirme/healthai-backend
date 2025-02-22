@@ -30,9 +30,15 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
     "django.contrib.sitemaps",
+    "rest_framework",
+    "django_extensions",
     "django_resized",
     "core",
     "user_profile",
+    "diet",
+    "chat",
+    "task",
+    "base",
 ]
 
 
@@ -82,6 +88,18 @@ AUTH_PASSWORD_VALIDATORS = [
         "NAME": "django.contrib.auth.password_validation.NumericPasswordValidator",
     },
 ]
+
+
+GRAPH_MODELS = {
+    "all_applications":[
+        "user_profile",
+        "diet",
+        "chat",
+        "task",
+        "base",        
+        ],
+    "group_models": True,
+}
 
 
 LANGUAGE_CODE = "en"

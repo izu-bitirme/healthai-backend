@@ -10,7 +10,7 @@ class Task(models.Model):
     assigner = models.ForeignKey(
         "user_profile.UserProfile",
         on_delete=models.CASCADE,
-        related_name="assigner",
+        related_name="task_assigner",
     )
     percentage = models.PositiveSmallIntegerField(default=0)
     created_at = models.DateTimeField(auto_now_add=True)
