@@ -13,7 +13,7 @@ def get_chat_message(request):
     
     return Response(
         {
-            "message": ChatBotManager.get_response(message, **({"model": model} if model else {})) if message else None
+            "message": ChatBotManager.get_response(message, **({"model": model} if model else {})) if message else None,
         },
         status=status.HTTP_200_OK
     )

@@ -22,6 +22,7 @@ from django.conf import settings
 
 api_patterns = [
     path("chat-bot/", include("ai_models.chat_bot.api.urls")),
+    path('auth/', include('core.settings.jwt.urls')),
 ]
 
 urlpatterns = [
@@ -34,3 +35,15 @@ if settings.DEBUG:
     urlpatterns += [
         path("__debug__/", include("debug_toolbar.urls")),
     ]
+
+
+
+"""
+  path('create/', create_user_profile),
+    path('edit/', edit_user_profile),
+    path('profile/', get_user_profile),
+    path('change_password/', change_password),
+    path('login/', TokenObtainPairView.as_view()),
+    path('refresh/', TokenRefreshView.as_view()),
+
+"""
