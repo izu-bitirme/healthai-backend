@@ -28,7 +28,8 @@ api_patterns = [
 urlpatterns = [
     path("admin/", admin.site.urls),
     path("__reload__/", include("django_browser_reload.urls")),
-    path("api/", include(api_patterns)), 
+    path("api/", include(api_patterns)),
+    path('api/user/', include('user_profile.urls')),
 ]
 
 if settings.DEBUG:
