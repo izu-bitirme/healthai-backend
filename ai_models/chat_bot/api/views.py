@@ -18,3 +18,6 @@ def get_chat_message(request):
         },
         status=status.HTTP_200_OK
     )
+
+
+

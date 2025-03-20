@@ -6,6 +6,7 @@ from user_profile.models import UserProfile
 class Role:
     user: str = "user"
 
+
 class ChatModel(BaseModel):
     display_name: str
     code: str
@@ -13,25 +14,26 @@ class ChatModel(BaseModel):
 
 class ChatModels:
     llama3: str = "llama3.2"
-    deepseek: str = "deepseek-r1:latest"
-    gemma: str = "gemma3:latest"
-    qwq: str = "qwq:latest"
-    ollama_turkish: str = "erdiari/llama3-turkish:latest"
+    deepseek: str = "deepseek-r1"
+    gemma: str = "gemma3"
+    ollama_turkish: str = "erdiari/llama3-turkish"
+    open_ai_gpt4: str = "gpt-4"
+
 
 AVAILABLE_MODELS = [
-    ChatModels.llama3,
+    ChatModels.ollama_turkish,
     ChatModels.deepseek,
+    ChatModels.llama3,
     ChatModels.gemma,
-    ChatModels.qwq,
-    ChatModels.ollama_turkish
+    ChatModels.open_ai_gpt4,
 ]
 
 OLLAMA_MODELS = Literal[
-    ChatModels.llama3,
+    ChatModels.ollama_turkish,
     ChatModels.deepseek,
+    ChatModels.llama3,
     ChatModels.gemma,
-    ChatModels.qwq,
-    ChatModels.ollama_turkish
+    ChatModels.open_ai_gpt4,
 ]
 
 ROLES = Literal[Role.user]
