@@ -16,4 +16,4 @@ class Task(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
-        return self.user + " " + self.content
+        return f"{self.user} - {self.content[:20]}"

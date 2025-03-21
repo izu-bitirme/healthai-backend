@@ -26,6 +26,7 @@ api_patterns = [
     path('auth/', include('core.settings.jwt.urls')),
     path('user/', include('user_profile.urls')),
     path('', include('base.urls')),
+    path('tasks/', include('task.urls')),
 ]
 
 urlpatterns = [
