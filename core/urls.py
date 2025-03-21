@@ -18,14 +18,38 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, include
 from django.conf import settings
+from django.conf.urls.static import static
+
+
+api_patterns = [
+    path("chat-bot/", include("ai_models.chat_bot.api.urls")),
+    path('auth/', include('core.settings.jwt.urls')),
+    path('user/', include('user_profile.urls')),
+    path('', include('base.urls')),
+    path('tasks/', include('task.urls')),
+]
 
 urlpatterns = [
     path("admin/", admin.site.urls),
     path("__reload__/", include("django_browser_reload.urls")),
-
+    path("api/", include(api_patterns)), 
 ]
 
 if settings.DEBUG:
     urlpatterns += [
         path("__debug__/", include("debug_toolbar.urls")),
     ]
+
+
+urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
+
+"""
+  path('create/', create_user_profile),
+    path('edit/', edit_user_profile),
+    path('profile/', get_user_profile),
+    path('change_password/', change_password),
+    path('login/', TokenObtainPairView.as_view()),
+    path('refresh/', TokenRefreshView.as_view()),
+
+"""

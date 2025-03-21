@@ -6,7 +6,7 @@ class NutrientUnit(models.Model):
 
 
 class Nutrient(models.Model):
-    name = models.CharField(max_length=100)
+    name = models.CharField(max_length=100, unique=True)
     kalories = models.PositiveIntegerField(default=0)
     proteins = models.PositiveIntegerField(default=0)
     fats = models.PositiveIntegerField(default=0)

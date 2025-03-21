@@ -13,3 +13,4 @@ secrets/
 db_data
 ./static/
 /static/
+.DS_Store
