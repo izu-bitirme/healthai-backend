@@ -25,6 +25,8 @@ class UserProfile(models.Model):
     )
     is_verified = models.BooleanField(default=False)
     full_address = models.CharField(max_length=100, blank=True, null=True)
+    phone_number = models.CharField(max_length=20, blank=True, null=True)
+    bio = models.TextField(blank=True, null=True)
 
     def __str__(self):
-        return self.user.first_name + " " + self.user.last_name
+        return self.user.username
