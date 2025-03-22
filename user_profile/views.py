@@ -16,7 +16,6 @@ class RegisterView(CreateAPIView):
         request.data["first_name"] = request.data.get("username")
         request.data['username'] = request.data.get('email', '').split('@')[0]
         request.data['email'] = request.data.get('email', '')
-
         return super().create(request, *args, **kwargs)
 
 
@@ -52,7 +51,3 @@ class ProfileView(CreateAPIView, RetrieveAPIView):
         except Exception as e:
             return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
 
-
-class PasswordUpdateView(CreateAPIView):
-    serializer_class = UserSerializer
-    permission_classes = [IsAuthenticated]

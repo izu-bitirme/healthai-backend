@@ -13,7 +13,7 @@ class UserProfile(models.Model):
 
     role = models.CharField(max_length=10, choices=ROLE_CHOICES, default=PATIENT)
 
-    user = models.ForeignKey("auth.User", on_delete=models.CASCADE)
+    user = models.OneToOneField("auth.User", on_delete=models.CASCADE)
     date_of_birth = models.DateField(blank=True, null=True)
     photo = ResizedImageField(
         size=[300, 300],
