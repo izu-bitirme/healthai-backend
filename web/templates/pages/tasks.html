@@ -1,0 +1,326 @@
+{% extends 'layouts/base.html' %}
+{% block title %}
+    Task List
+{% endblock title %}
+{% block page_title %}
+    Task List
+{% endblock page_title %}
+{% block page_desc %}
+    Manage patient tasks
+{% endblock page_desc %}
+{% block content %}
+    <div class="content d-flex flex-column flex-column-fluid" id="kt_content">
+        <!--begin::Container-->
+        <div class=" container-xxl " id="kt_content_container">
+            <div class="card card-flush mt-6 mt-xl-9">
+                <!--begin::Card header-->
+                <div class="card-header mt-5">
+                    <!--begin::Card title-->
+                    <div class="card-title flex-column">
+                        <h3 class="fw-bold mb-1">Patient Tasks</h3>
+                        <div class="fs-6 text-gray-500">Total {{ tasks.count }}</div>
+                    </div>
+                    <!--begin::Card title-->
+                    
+                </div>
+                <!--end::Card header-->
+                <!--begin::Card body-->
+                <div class="card-body pt-0">
+                    <!--begin::Table container-->
+                    <div class="table-responsive">
+                        <!--begin::Table-->
+                        <div id="kt_profile_overview_table_wrapper"
+                             class="dt-container dt-bootstrap5 dt-empty-footer">
+                            <div id="" class="table-responsive">
+                                <div id="kt_profile_overview_table_wrapper"
+                                     class="dt-container dt-bootstrap5 dt-empty-footer">
+                                    <div id="" class="table-responsive">
+                                        <div id="kt_profile_overview_table_wrapper"
+                                             class="dt-container dt-bootstrap5 dt-empty-footer">
+                                            <div id="" class="table-responsive">
+                                                <table id="kt_profile_overview_table"
+                                                       class="table table-row-bordered table-row-dashed gy-4 align-middle fw-bold dataTable"
+                                                       style="width: 100%">
+                                                    <colgroup>
+                                                        <col data-dt-column="0" style="width: 317.156px;">
+                                                        <col data-dt-column="1" style="width: 190.297px;">
+                                                        <col data-dt-column="2" style="width: 198.172px;">
+                                                        <col data-dt-column="3" style="width: 133.977px;">
+                                                    </colgroup>
+                                                    <thead class="fs-7 text-gray-500 text-uppercase">
+                                                        <tr>
+                                                            <th class="min-w-250px dt-orderable-asc dt-orderable-desc"
+                                                                data-dt-column="0"
+                                                                rowspan="1"
+                                                                colspan="1"
+                                                                aria-label="Manager: Activate to sort: Activate to sort: Activate to sort"
+                                                                tabindex="0">
+                                                                <span class="dt-column-title" role="button">Patient</span><span class="dt-column-order"></span>
+                                                            </th>
+                                                            <th class="min-w-150px dt-orderable-asc dt-orderable-desc"
+                                                                data-dt-column="1"
+                                                                rowspan="1"
+                                                                colspan="1"
+                                                                aria-label="Date: Activate to sort: Activate to sort: Activate to sort"
+                                                                tabindex="0">
+                                                                <span class="dt-column-title" role="button">Due Date</span><span class="dt-column-order"></span>
+                                                            </th>
+                                                            <th class="min-w-90px dt-type-numeric dt-orderable-asc dt-orderable-desc"
+                                                                data-dt-column="2"
+                                                                rowspan="1"
+                                                                colspan="1"
+                                                                aria-label="Amount: Activate to sort: Activate to sort: Activate to sort"
+                                                                tabindex="0">
+                                                                <span class="dt-column-title" role="button">Task</span><span class="dt-column-order"></span>
+                                                            </th>
+                                                            <th class="min-w-90px dt-orderable-asc dt-orderable-desc"
+                                                                data-dt-column="3"
+                                                                rowspan="1"
+                                                                colspan="1"
+                                                                aria-label="Status: Activate to sort: Activate to sort: Activate to sort"
+                                                                tabindex="0">
+                                                                <span class="dt-column-title" role="button">Status</span><span class="dt-column-order"></span>
+                                                            </th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody class="fs-6">
+                                                        {% for task in tasks %}
+                                                        <tr>
+                                                            <td>
+                                                                <!--begin::User-->
+                                                                <div class="d-flex align-items-center">
+                                                                    <!--begin::Wrapper-->
+                                                                    <div class="me-5 position-relative">
+                                                                        <!--begin::Avatar-->
+                                                                        <div class="symbol symbol-35px symbol-circle">
+                                                                            <img alt="Pic" src="{{ task.patient.profile.photo }}">
+                                                                        </div>
+                                                                        <!--end::Avatar-->
+                                                                    </div>
+                                                                    <!--end::Wrapper-->
+                                                                    <!--begin::Info-->
+                                                                    <div class="d-flex flex-column justify-content-center">
+                                                                        <a href="{% url "dashboard" %}" class="fs-6 text-gray-800 text-hover-primary">{{ task.patient.profile.user.first_name }} {{ task.patient.profile.user.last_name }} </a>
+                                                                        <div class="fw-semibold text-gray-500">{{ task.patient.profile.user.email }}</div>
+                                                                    </div>
+                                                                    <!--end::Info-->
+                                                                </div>
+                                                                <!--end::User-->
+                                                            </td>
+                                                            <td data-order="2025-10-25T00:00:00+03:00"> {{ task.due_date|date:"F d, Y" }}</td>
+                                                            <td class="dt-type-numeric">
+                                                                {{ task.title|truncatechars:30 }}
+                                                            </td>
+                                                            <td>
+                                                                <span class="badge {{ task.get_status_color }} fw-bold px-4 py-3">{{ task.status }}</span>
+                                                            </td>
+                                                        
+                                                        </tr>
+                                                        {% endfor %}
+                                                    </tbody>
+                                                    <tfoot></tfoot>
+                                                </table>
+                                            </div>
+                                            <div id="" class="row">
+                                                <div id=""
+                                                     class="col-sm-12 col-md-5 d-flex align-items-center justify-content-center justify-content-md-start dt-toolbar">
+                                                </div>
+                                                <div id=""
+                                                     class="col-sm-12 col-md-7 d-flex align-items-center justify-content-center justify-content-md-end">
+                                                    <div class="dt-paging paging_simple_numbers">
+                                                        <nav aria-label="pagination">
+                                                            <ul class="pagination">
+                                                                <li class="dt-paging-button page-item disabled">
+                                                                    <button class="page-link previous"
+                                                                            role="link"
+                                                                            type="button"
+                                                                            aria-controls="kt_profile_overview_table"
+                                                                            aria-disabled="true"
+                                                                            aria-label="Previous"
+                                                                            data-dt-idx="previous"
+                                                                            tabindex="-1">
+                                                                        <i class="previous"></i>
+                                                                    </button>
+                                                                </li>
+                                                                <li class="dt-paging-button page-item active">
+                                                                    <button class="page-link"
+                                                                            role="link"
+                                                                            type="button"
+                                                                            aria-controls="kt_profile_overview_table"
+                                                                            aria-current="page"
+                                                                            data-dt-idx="0">1</button>
+                                                                </li>
+                                                                <li class="dt-paging-button page-item disabled">
+                                                                    <button class="page-link next"
+                                                                            role="link"
+                                                                            type="button"
+                                                                            aria-controls="kt_profile_overview_table"
+                                                                            aria-disabled="true"
+                                                                            aria-label="Next"
+                                                                            data-dt-idx="next"
+                                                                            tabindex="-1">
+                                                                        <i class="next"></i>
+                                                                    </button>
+                                                                </li>
+                                                            </ul>
+                                                        </nav>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <!--end::Table-->
+                    </div>
+                    <!--end::Table container-->
+                </div>
+                <!--end::Card body-->
+            </div>
+        </div>
+    </div>
+{% endblock content %}
+{% block actions %}
+    <a href="#"
+       class="btn btn-primary"
+       data-bs-toggle="modal"
+       data-bs-target="#task_modal">New Task</a>
+{% endblock actions %}
+{% block modals %}
+    <div class="modal fade"
+         id="task_modal"
+         tabindex="-1"
+         style="display: none"
+         aria-hidden="true">
+        <!--begin::Modal dialog-->
+        <div class="modal-dialog modal-dialog-centered mw-650px"
+             data-select2-id="select2-data-347-xeqt">
+            <!--begin::Modal content-->
+            <div class="modal-content">
+                <!--begin::Form-->
+                <form method="POST"
+                      class="form fv-plugins-bootstrap5 fv-plugins-framework"
+                      id="kt_modal_new_address_form">
+                    {% csrf_token %}
+                    <!--begin::Modal header-->
+                    <div class="modal-header" id="kt_modal_new_address_header">
+                        <!--begin::Modal title-->
+                        <h2>Add New Task</h2>
+                        <!--end::Modal title-->
+                        <!--begin::Close-->
+                        <div class="btn btn-sm btn-icon btn-active-color-primary"
+                             data-bs-dismiss="modal">
+                            <i class="ki-duotone ki-cross fs-1"><span class="path1"></span><span class="path2"></span></i>
+                        </div>
+                        <!--end::Close-->
+                    </div>
+                    <!--end::Modal header-->
+                    <!--begin::Modal body-->
+                    <div class="modal-body py-10 px-lg-17">
+                        <!--begin::Scroll-->
+                        <div class="scroll-y me-n7 pe-7"
+                             id="kt_modal_new_address_scroll"
+                             data-kt-scroll="true"
+                             data-kt-scroll-activate="{default: false, lg: true}"
+                             data-kt-scroll-max-height="auto"
+                             data-kt-scroll-dependencies="#kt_modal_new_address_header"
+                             data-kt-scroll-wrappers="#kt_modal_new_address_scroll"
+                             data-kt-scroll-offset="300px"
+                             style="max-height: 544px"
+                             data-select2-id="select2-data-kt_modal_new_address_scroll">
+                            <!--begin::Input group-->
+                            <div class="row mb-5">
+                                <!--begin::Col-->
+                                <div class="col-md-12 fv-row fv-plugins-icon-container">
+                                    <!--begin::Label-->
+                                    <label class="required fs-5 fw-semibold mb-2">Title</label>
+                                    <!--end::Label-->
+                                    <!--begin::Input-->
+                                    <input type="text"
+                                           class="form-control form-control-solid"
+                                           placeholder=""
+                                           required
+                                           name="title">
+                                    <!--end::Input-->
+                                    <div class="fv-plugins-message-container fv-plugins-message-container--enabled invalid-feedback"></div>
+                                </div>
+                                <!--end::Col-->
+                            </div>
+                            <!--end::Input group-->
+                            <!--begin::Input group-->
+                            <div class="row mb-5">
+                                <!--begin::Col-->
+                                <div class="col-md-12 fv-row fv-plugins-icon-container">
+                                    <!--begin::Label-->
+                                    <label class="required fs-5 fw-semibold mb-2">Description</label>
+                                    <!--end::Label-->
+                                    <!--begin::Input-->
+                                    <textarea type="text"
+                                              class="form-control form-control-solid"
+                                              required
+                                              name="description"></textarea>
+                                    <!--end::Input-->
+                                    <div class="fv-plugins-message-container fv-plugins-message-container--enabled invalid-feedback"></div>
+                                </div>
+                                <!--end::Col-->
+                            </div>
+                            <!--end::Input group-->
+                            <!--begin::Input group-->
+                            <div class="row mb-5">
+                                <!--begin::Col-->
+                                <div class="col-md-12 fv-row fv-plugins-icon-container">
+                                    <!--begin::Label-->
+                                    <label class="required fs-5 fw-semibold mb-2">Ptient</label>
+                                    <!--end::Label-->
+                                    <!--begin::Input-->
+                                    <select class="form-control form-control-solid" required name="patient">
+                                        <option value="">Select Patient</option>
+                                        {% for patient in patients %}<option value="{{ patient.id }}">{{ patient.full_name }}</option>{% endfor %}
+                                    </select>
+                                    <!--end::Input-->
+                                    <div class="fv-plugins-message-container fv-plugins-message-container--enabled invalid-feedback"></div>
+                                </div>
+                                <!--end::Col-->
+                            </div>
+                            <!--end::Input group-->
+                            <!--begin::Input group-->
+                            <div class="d-flex flex-column mb-5 fv-row fv-plugins-icon-container">
+                                <!--begin::Label-->
+                                <label class="fs-5 fw-semibold mb-2">Due Date</label>
+                                <!--end::Label-->
+                                <!--begin::Input-->
+                                <input type="date" class="form-control form-control-solid" name="due_date">
+                                <!--end::Input-->
+                                <div class="fv-plugins-message-container fv-plugins-message-container--enabled invalid-feedback"></div>
+                            </div>
+                            <!--end::Input group-->
+                        </div>
+                        <!--end::Scroll-->
+                    </div>
+                    <!--end::Modal body-->
+                    <!--begin::Modal footer-->
+                    <div class="modal-footer flex-center">
+                        <!--begin::Button-->
+                        <button type="reset"
+                                id="kt_modal_new_address_cancel"
+                                class="btn btn-light me-3">Discard</button>
+                        <!--end::Button-->
+                        <!--begin::Button-->
+                        <button type="submit"
+                                id="kt_modal_new_address_submit"
+                                class="btn btn-primary">
+                            <span class="indicator-label">Submit</span>
+                            <span class="indicator-progress">
+                                Please wait... <span class="spinner-border spinner-border-sm align-middle ms-2"></span>
+                            </span>
+                        </button>
+                        <!--end::Button-->
+                    </div>
+                    <!--end::Modal footer-->
+                </form>
+                <!--end::Form-->
+            </div>
+        </div>
+    </div>
+{% endblock modals %}

@@ -1,7 +1,6 @@
 from rest_framework import serializers
-from django.core.exceptions import ValidationError
 from django.contrib.auth.models import User
-from .models import UserProfile
+from .models import UserProfile, Patient, Doctor, Therapist
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -15,6 +14,8 @@ class UserSerializer(serializers.ModelSerializer):
         user = User(**validated_data)
         user.set_password(password)
         user.save()
+        profile = UserProfile.objects.create(user=user, role=UserProfile.PATIENT)
+        Patient.objects.create(profile=profile)
         return user
 
     def to_representation(self, instance):
@@ -23,21 +24,48 @@ class UserSerializer(serializers.ModelSerializer):
         return data
 
 
+class DoctorSerializer(serializers.ModelSerializer):
+    username = serializers.CharField(source="profile.user.username", read_only=True)
+    full_name = serializers.CharField(
+        source="profile.user.get_full_name", read_only=True
+    )
+    userId = serializers.IntegerField(source="profile.user.id", read_only=True)
+
+    class Meta:
+        model = Doctor
+        fields = [
+            "userId",
+            "username",
+            "full_name",
+            "specialty",
+            "license_number",
+        ]
+
+
+class TherapistSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Therapist
+        exclude = ["profile"]
+
+
 class ProfileSerializer(serializers.ModelSerializer):
+    user = UserSerializer(read_only=True)
+
     class Meta:
         model = UserProfile
-        fields = [ "role", "photo", "phone_number" , "bio", "full_address", "date_of_birth"]
+        fields = [
+            "id",
+            "user",
+            "role",
+            "photo",
+            "bio",
+        ]
 
-    def to_representation(self, instance):
-        data = super().to_representation(instance)
-        data["user"] = UserSerializer(instance.user).data
-        return data
 
-    def create(self, validated_data):
-        return UserProfile.objects.create(**validated_data)
+class PatientSerializer(serializers.ModelSerializer):
+    profile = ProfileSerializer(read_only=True)
+    doctors = DoctorSerializer(many=True, read_only=True)
 
-    def update(self, instance, validated_data):
-        for attr, value in validated_data.items():
-            setattr(instance, attr, value)
-        instance.save()
-        return instance
+    class Meta:
+        model = Patient
+        fields = "__all__"

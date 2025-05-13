@@ -35,3 +35,6 @@ class AppDataView(APIView):
                 "ai_models": list(AVAILABLE_MODELS)
             }
         )
+
+
+

@@ -39,4 +39,3 @@ OLLAMA_MODELS = Literal[
 ROLES = Literal[Role.user]
 
 
-# from ai_models.chat_bot.utils import get_response_from_model

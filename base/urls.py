@@ -3,4 +3,5 @@ from .views import AppDataView
 
 urlpatterns = [
     path('app-data/', AppDataView.as_view()),
+
 ]
