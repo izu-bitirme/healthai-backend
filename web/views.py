@@ -173,3 +173,5 @@ class VideoCallView(DoctorAuthMixin, View):
                 "room_id": call_id,
             },
         )
+
+

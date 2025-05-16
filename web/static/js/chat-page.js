@@ -27,10 +27,18 @@ createApp({
 
         window.chatSocket.onmessage = function(e) {
             const data = JSON.parse(e.data);
+            console.log(data);
             if (data.type == 'chat_message') {
                 chatList.value.push(data);
                 chats.value.push(data);
                 message.value = '';
+                return;
+            }
+
+            if(data.type == 'call') {
+                const callUrl = $('#call_url').val().replace('000', data.call_id);
+                window.location.href = callUrl;
+                return;
             }
         }
 

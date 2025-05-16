@@ -61,7 +61,7 @@ class Patient(models.Model):
     doctors = models.ManyToManyField("Doctor", related_name="patients", blank=True)
 
     def __str__(self):
-        return f"Patient: {self.profile.user.get_full_name()}"
+        return f"Patient: {self.profile.user.username}"
 
 
 class Doctor(models.Model):
@@ -75,7 +75,7 @@ class Doctor(models.Model):
     department = models.CharField(max_length=100, blank=True, null=True)
 
     def __str__(self):
-        return f"Dr. {self.profile.user.get_full_name()}"
+        return f"Dr. {self.profile.user.username}"
 
 
 class Therapist(models.Model):
@@ -87,4 +87,15 @@ class Therapist(models.Model):
     license_number = models.CharField(max_length=50, blank=True, null=True)
 
     def __str__(self):
-        return f"Therapist: {self.profile.user.get_full_name()}"
+        return f"Therapist: {self.profile.user.username}"
+
+
+
+class Notification(models.Model):
+    user = models.ForeignKey(Doctor, on_delete=models.CASCADE, related_name="notifications")
+    asigned_patient = models.ForeignKey(Patient, on_delete=models.CASCADE, related_name="notifications")
+    message = models.TextField()
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return self.message

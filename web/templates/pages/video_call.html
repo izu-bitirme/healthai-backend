@@ -35,27 +35,24 @@
         const kitToken = ZegoUIKitPrebuilt.generateKitTokenForTest(appID, serverSecret, roomID, userID, userName);
             const zp = ZegoUIKitPrebuilt.create(kitToken);
             zp.joinRoom({
-                container: document.querySelector("#root"),
-                sharedLinks: [{
-                    name: 'Personal link',
-                    url: window.location.protocol + '//' + window.location.host  + window.location.pathname + '?roomID=' + roomID,
-                }],
+                turnOnMicrophoneWhenJoining: true,
+                turnOnCameraWhenJoining: true,
+                showMyCameraToggleButton: true,
+                showMyMicrophoneToggleButton: true,
+                showAudioVideoSettingsButton: true,
+                showScreenSharingButton: true,
+                showTextChat: true,
+                showUserList: true,
+                maxUsers: 2,
+                layout: "Auto",
+                showLayoutButton: false,
                 scenario: {
-                    mode: ZegoUIKitPrebuilt.VideoConference,
-                },
-                    
-                   turnOnMicrophoneWhenJoining: true,
-                   turnOnCameraWhenJoining: true,
-                   showMyCameraToggleButton: true,
-                   showMyMicrophoneToggleButton: true,
-                   showAudioVideoSettingsButton: true,
-                   showScreenSharingButton: true,
-                   showTextChat: true,
-                   showUserList: true,
-                   maxUsers: 2,
-                   layout: "Auto",
-                   showLayoutButton: false,
-                });
+                    mode: "OneONoneCall",
+                    config: {
+                        role: "Host",
+                  },
+              },
+          });
     }
     </script>
 {% endblock scripts %}

@@ -36,8 +36,13 @@ class ProfileView(CreateAPIView, RetrieveAPIView):
             serializer = self.get_serializer(user_profile)
             return Response(serializer.data, status=status.HTTP_200_OK)
         except UserProfile.DoesNotExist:
+            user = User.objects.get(id=request.user.id)
+            UserProfile.objects.create(user=user, role="patient")
+            serializer = self.get_serializer(UserProfile.objects.get(user=request.user))
             return Response(
-                {"error": "User profile not found"}, status=status.HTTP_404_NOT_FOUND
+                serializer.data,
+                status=status.HTTP_201_CREATED,
+                
             )
 
     def post(self, request, *args, **kwargs):
@@ -72,7 +77,7 @@ class PatientProfileView(APIView):
     def get(self, request, *args, **kwargs):
         try:
             user_profile = Patient.objects.get(profile__user=request.user)
-            serializer = PatientSerializer(user_profile)
+            serializer = PatientSerializer(user_profile, context={"request": request})
             return Response(serializer.data, status=status.HTTP_200_OK)
         except Patient.DoesNotExist:
             return Response(
@@ -91,7 +96,9 @@ class GetDoctorsView(APIView):
             email=F("profile__user__email"),
             user_id=F("profile__user__id"),
         )
-        serializer = DoctorSerializer(doctors, many=True)
-        return Response(serializer.data, status=status.HTTP_200_OK)
+        serializer = DoctorSerializer(doctors, many=True, context={
+            "request": request
+        })
+        return Response({"doctors": serializer.data}, status=status.HTTP_200_OK)
         
         

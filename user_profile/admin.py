@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import UserProfile, Doctor, Patient, Therapist
+from .models import UserProfile, Doctor, Patient, Therapist, Notification
 
 @admin.register(UserProfile)
 class UserProfileAdmin(admin.ModelAdmin):
@@ -20,3 +20,9 @@ class PatientAdmin(admin.ModelAdmin):
 class TherapistAdmin(admin.ModelAdmin):
     list_display = ["profile", "expertise_area", "license_number"]
     search_fields = ["profile__user__username", "expertise_area"]
+
+
+@admin.register(Notification)
+class NoneAdmin(admin.ModelAdmin):
+    list_display = ["user", "message", "created_at"]
+    search_fields = ["user__username", "message"]

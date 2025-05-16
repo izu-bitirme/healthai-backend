@@ -9,6 +9,8 @@ from rest_framework_simplejwt.exceptions import InvalidToken, TokenError
 from user_profile.models import UserProfile
 from django.core.exceptions import ObjectDoesNotExist
 from chat.models import Message
+from django.utils.crypto import get_random_string
+import os
 
 logger = logging.getLogger(__name__)
 User = get_user_model()
@@ -155,42 +157,19 @@ class ChatConsumer(AsyncWebsocketConsumer):
         )
 
     async def handle_call_message(self, data):
-        call_type = data["call_type"]
         receiver_id = data["receiver_id"]
-        action = data["action"]
 
-        if action == "start":
-            call_log = await self.create_call_log(
-                receiver_id=receiver_id, call_type=call_type, started_at=datetime.now()
-            )
+        json_data = {
+            "type": "call",
+            "call_id": get_random_string(
+                length=10,
+                allowed_chars="abcdefghijklmnopqrstuvwxyz0123456789",
+            ),
+            "receiver_id": receiver_id,
+        }
 
-            await self.broadcast_message(
-                {
-                    "type": "call_message",
-                    "action": "start",
-                    "call_id": call_log.id,
-                    "call_type": call_type,
-                    "sender_id": self.user.id,
-                    "receiver_id": receiver_id,
-                    "timestamp": str(datetime.now()),
-                }
-            )
-        elif action in ["end", "missed"]:
-            call_log = await self.update_call_log(
-                call_id=data["call_id"], action=action
-            )
-
-            await self.broadcast_message(
-                {
-                    "type": "call_message",
-                    "action": action,
-                    "call_id": call_log.id,
-                    "duration": call_log.duration() if action == "end" else 0,
-                    "sender_id": self.user.id,
-                    "receiver_id": receiver_id,
-                    "timestamp": str(datetime.now()),
-                }
-            )
+        await self.channel_layer.group_send("user_" + str(receiver_id), json_data)
+        await self.channel_layer.group_send("user_" + str(self.user.id), json_data)
 
     async def handle_typing_indicator(self, data):
         await self.broadcast_message(
@@ -207,6 +186,13 @@ class ChatConsumer(AsyncWebsocketConsumer):
 
     async def chat_message(self, event):
         await self.send_message(event, "chat_message")
+
+    async def call(self, event):
+        event = {
+            **event,
+            
+        }
+        await self.send_message(event, "call")
 
     async def call_message(self, event):
         await self.send_message(event, "call_message")

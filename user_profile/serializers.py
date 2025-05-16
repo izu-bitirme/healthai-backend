@@ -29,6 +29,7 @@ class DoctorSerializer(serializers.ModelSerializer):
     full_name = serializers.CharField(
         source="profile.user.get_full_name", read_only=True
     )
+    avatar = serializers.ImageField(source="profile.photo", read_only=True)
     userId = serializers.IntegerField(source="profile.user.id", read_only=True)
 
     class Meta:
@@ -39,7 +40,14 @@ class DoctorSerializer(serializers.ModelSerializer):
             "full_name",
             "specialty",
             "license_number",
+            "avatar",
         ]
+
+    def get_avatar(self, obj):
+        request = self.context.get("request")
+        if request:
+            return request.build_absolute_uri(obj.profile.photo.url)
+        return obj.profile.photo.url
 
 
 class TherapistSerializer(serializers.ModelSerializer):
@@ -61,6 +69,12 @@ class ProfileSerializer(serializers.ModelSerializer):
             "bio",
         ]
 
+    def get_photo(self, obj):
+        request = self.context.get("request")
+        if request:
+            return request.build_absolute_uri(obj.photo.url)
+        return obj.photo.url
+
 
 class PatientSerializer(serializers.ModelSerializer):
     profile = ProfileSerializer(read_only=True)
@@ -69,3 +83,9 @@ class PatientSerializer(serializers.ModelSerializer):
     class Meta:
         model = Patient
         fields = "__all__"
+
+    def get_profile(self, obj):
+        return ProfileSerializer(obj.profile, context={"request": self.context.get("request")}).data
+
+    def get_doctors(self, obj):
+        return DoctorSerializer(obj.doctors, many=True, context={"request": self.context.get("request")}).data

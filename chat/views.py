@@ -39,7 +39,7 @@ class StartCallView(APIView):
             return Response(
                 {
                     "app_id": int(os.getenv("ZEGO_APP_ID")),
-                    "app_sign": os.getenv("ZEGO_APP_SIGN"),
+                    "app_sign": os.getenv("ZEGO_SERVER_SECRET"),
                     "user_id": str(request.user.id),
                     "user_name": request.user.username,
                     "call_id": call_id,
