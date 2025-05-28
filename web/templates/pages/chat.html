@@ -136,11 +136,11 @@
                                  data-kt-scroll-offset="5px"
                                  style="max-height: 313px">
                                 <!--begin::Message(in)-->
-                                <div v-for="chat in chats" :key="chat.id" class="d-flex justify-content-start mb-10 ">
+                                <div v-for="chat in chats" :key="chat.id" :class="chat.is_sender ? 'justify-content-end' : 'justify-content-start'" class="d-flex mb-10 ">
                                     <!--begin::Wrapper-->
-                                    <div class="d-flex flex-column align-items-start">
+                                    <div class="d-flex flex-column" :class="chat.is_sender ? 'align-items-end' : 'align-items-start'">
                                         <!--begin::User-->
-                                        <div class="d-flex align-items-center mb-2">
+                                        <div class="d-flex align-items-center mb-2" :class="chat.is_sender ? 'flex-row-reverse' : ''">
                                             <!--begin::Avatar-->
                                             <div class="symbol  symbol-35px symbol-circle ">
                                                 <img alt="Pic" :src="chat.sender_image">

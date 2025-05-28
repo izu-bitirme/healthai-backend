@@ -6,7 +6,7 @@ from django.db.models import F, Sum, CharField, Value
 from django.db.models.functions import Concat
 from .forms import TaskForm, Task
 from django.urls import reverse
-from rest_framework import generics, permissions
+from rest_framework import generics, permissions, response
 from .serializers import TaskSerializer
 
 
@@ -53,7 +53,28 @@ class PatientTasksView(generics.ListAPIView):
     serializer_class = TaskSerializer
     permission_classes = [permissions.IsAuthenticated]
 
-    def get_queryset(self):
-        return Task.objects.filter(patient=self.kwargs["patient_id"])
+    def get(self, request):
+        user = self.request.user
+        patient = Patient.objects.get(profile__user=user)
+        return response.Response(
+            {
+                "result": self.serializer_class(
+                    Task.objects.filter(patient=patient), many=True
+                ).data
+            }
+        )
 
-    
+
+
+
+class TaskCompleteView(generics.UpdateAPIView):
+    serializer_class = TaskSerializer
+    permission_classes = [permissions.IsAuthenticated]
+
+    def post(self, request, pk  , *args, **kwargs):
+        is_complete = request.data.get("is_complete")
+        task = Task.objects.get(id=pk)
+        task.completed = is_complete
+        task.save()
+
+        return response.Response({"result": self.serializer_class(task).data})
