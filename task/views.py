@@ -22,7 +22,7 @@ class TaskView(DoctorAuthMixin, View):
                 request,
                 self.template_name,
                 context={
-                    "patients": Patient.objects.filter(doctors__in=doctor).annotate(
+                    "patients": Patient.objects.all().annotate(
                         full_name=Concat(
                             F("profile__user__first_name"),
                             Value(" "),
@@ -30,7 +30,7 @@ class TaskView(DoctorAuthMixin, View):
                             output_field=CharField(),
                         ),
                     ),
-                    "tasks": Task.objects.filter(patient__doctors__in=doctor)
+                    "tasks": Task.objects.filter()
                     .prefetch_related("patient")
                     .prefetch_related("patient__profile")
                     .prefetch_related("patient__profile__user")
@@ -65,16 +65,14 @@ class PatientTasksView(generics.ListAPIView):
         )
 
 
-
-
 class TaskCompleteView(generics.UpdateAPIView):
     serializer_class = TaskSerializer
     permission_classes = [permissions.IsAuthenticated]
 
-    def post(self, request, pk  , *args, **kwargs):
-        is_complete = request.data.get("is_complete")
+    def post(self, request, pk, *args, **kwargs):
         task = Task.objects.get(id=pk)
-        task.completed = is_complete
+        task.is_completed = True
+        task.status = "completed"
         task.save()
 
         return response.Response({"result": self.serializer_class(task).data})

@@ -25,7 +25,7 @@ class UserProfile(models.Model):
         crop=["middle", "center"],
         force_format="WEBP",
         quality=80,
-        default="profiles/default.png",
+        default="profiles/default.webp",
         upload_to="profiles/",
         blank=True,
         null=True,
@@ -48,8 +48,12 @@ class Patient(models.Model):
         UserProfile, on_delete=models.CASCADE, related_name="patient_data"
     )
 
-    height_before = models.DecimalField(max_digits=5, decimal_places=2, null=True, blank=True)
-    height_target = models.DecimalField(max_digits=5, decimal_places=2, null=True, blank=True)
+    height_before = models.DecimalField(
+        max_digits=5, decimal_places=2, null=True, blank=True
+    )
+    height_target = models.DecimalField(
+        max_digits=5, decimal_places=2, null=True, blank=True
+    )
     weight = models.DecimalField(max_digits=5, decimal_places=2, null=True, blank=True)
     surgery_date = models.DateField(null=True, blank=True)
     surgery_type = models.CharField(max_length=100, null=True, blank=True)
@@ -59,6 +63,7 @@ class Patient(models.Model):
     emergency_phone = models.CharField(max_length=20, blank=True, null=True)
 
     doctors = models.ManyToManyField("Doctor", related_name="patients", blank=True)
+    start_date = models.DateField(auto_now_add=True)
 
     def __str__(self):
         return f"Patient: {self.profile.user.username}"
@@ -90,12 +95,20 @@ class Therapist(models.Model):
         return f"Therapist: {self.profile.user.username}"
 
 
-
 class Notification(models.Model):
-    user = models.ForeignKey(Doctor, on_delete=models.CASCADE, related_name="notifications")
-    asigned_patient = models.ForeignKey(Patient, on_delete=models.CASCADE, related_name="notifications")
+    user = models.ForeignKey(
+        Doctor, on_delete=models.CASCADE, related_name="notifications"
+    )
+    asigned_patient = models.ForeignKey(
+        Patient,
+        on_delete=models.CASCADE,
+        related_name="notifications",
+        null=True,
+        blank=True,
+    )
     message = models.TextField()
     created_at = models.DateTimeField(auto_now_add=True)
+    valid_until = models.DateTimeField()
 
     def __str__(self):
         return self.message

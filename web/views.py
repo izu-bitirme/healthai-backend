@@ -6,7 +6,7 @@ from django.contrib.auth.models import User
 from django.contrib.auth import authenticate, login, logout
 from user_profile.models import Patient
 from task.models import Task
-from django.db.models import Count, Q
+from django.db.models import Count, Q, ExpressionWrapper, DateField
 from datetime import datetime, timedelta
 import json
 from django.utils import timezone
@@ -18,11 +18,11 @@ from django.core import serializers
 from django.core.serializers.json import DjangoJSONEncoder
 from chat.models import Message
 from rest_framework_simplejwt.tokens import RefreshToken
+import json
 
 
 class DoctorAuthMixin:
     def dispatch(self, request, *args, **kwargs):
-
         if (
             not request.user.is_authenticated
             or request.user.profile.role != UserProfile.DOCTOR
@@ -32,12 +32,37 @@ class DoctorAuthMixin:
         return super().dispatch(request, *args, **kwargs)
 
 
-class HomePage(View, DoctorAuthMixin):
+class HomePage(DoctorAuthMixin, View):
     template_name = "pages/index.html"
 
     def get(self, request):
-        user = UserProfile.objects.get(user=request.user)
-        return render(request, self.template_name, context={"user": user})
+        user = UserProfile.objects.filter(user=request.user).first()
+        patients = Patient.objects.filter(
+            start_date__lte=datetime.now() + timedelta(days=90)
+        ).annotate(
+            patient_name=Concat(
+                F("profile__user__first_name"),
+                F("profile__user__last_name"),
+            ),
+        )
+
+        patients = [
+            {
+                "id": patient.id,
+                "patient_name": patient.patient_name,
+                "days_left": (datetime.now().date() - patient.start_date).days or 1,
+            }
+            for patient in patients
+        ]
+
+        return render(
+            request,
+            self.template_name,
+            context={
+                "user": user,
+                "patients": json.dumps(patients),
+            },
+        )
 
 
 class LoginView(View, DoctorAuthMixin):
@@ -85,6 +110,9 @@ class SignupView(View):
         user = User.objects.create_user(username=username, password=password)
         # Kullanıcı için profil oluştur
         profile = UserProfile.objects.create(user=user, role="doctor")
+        Doctor.objects.create(profile=profile)
+        user.first_name = user.first_name or user.username
+        user.save()
 
         # Otomatik login yap
         login(request, user)
@@ -96,14 +124,14 @@ def logout_view(request):
     return redirect("/login")
 
 
-class ChatView(View, DoctorAuthMixin):
+class ChatView(DoctorAuthMixin, View):
     template_name = "pages/chat.html"
 
     def get(self, request):
         doctor = Doctor.objects.filter(profile__user=request.user)
         token = RefreshToken.for_user(request.user)
 
-        patients = Patient.objects.filter(doctors__in=doctor).annotate(
+        patients = Patient.objects.filter().annotate(
             full_name=Concat(
                 F("profile__user__first_name"),
                 Value(" "),
@@ -173,5 +201,3 @@ class VideoCallView(DoctorAuthMixin, View):
                 "room_id": call_id,
             },
         )
-
-

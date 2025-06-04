@@ -973,7 +973,10 @@
     <div id="kt_scrolltop" class="scrolltop" data-kt-scrolltop="true">
         <i class="ki-duotone ki-arrow-up"><span class="path1"></span><span class="path2"></span></i>
     </div>
-    <input type="hidden" id="call_url" name="call_url" value="{% url 'video_call' '000' %}">
+    <input type="hidden"
+           id="call_url"
+           name="call_url"
+           value="{% url 'video_call' '000' %}">
     <!--end::Scrolltop-->
     <!--begin::Modals-->
     {% block modals %}
@@ -1016,12 +1019,14 @@
     </script>
     <!--end::Custom Javascript-->
     {% block scripts %}
-    {{ scripts }}
+        {{ scripts }}
     {% endblock scripts %}
     <script>
         const urlList = [
             'home/',
-            'task'
+            'task',
+            'chat',
+            'notification'
         ];
 
         $('.menu-item').removeClass('here');
@@ -1032,7 +1037,6 @@
         const index = urlList.indexOf(item);
         $('.menu-item').eq(index >= 0 ? index : 0).addClass('here');
     </script>
-   
     <!--end::Javascript-->
 </body>
 <!--end::Body-->

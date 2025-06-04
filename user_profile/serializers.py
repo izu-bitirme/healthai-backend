@@ -1,6 +1,13 @@
+from datetime import datetime
 from rest_framework import serializers
 from django.contrib.auth.models import User
-from .models import UserProfile, Patient, Doctor, Therapist
+from .models import Notification, UserProfile, Patient, Doctor, Therapist
+
+
+class NotificationSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Notification
+        fields = ("message",)
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -13,9 +20,13 @@ class UserSerializer(serializers.ModelSerializer):
         password = validated_data.pop("password")
         user = User(**validated_data)
         user.set_password(password)
+        user.first_name = user.first_name or user.username
         user.save()
         profile = UserProfile.objects.create(user=user, role=UserProfile.PATIENT)
-        Patient.objects.create(profile=profile)
+        patient = Patient.objects.create(profile=profile)
+
+        patient.doctors.add(Doctor.objects.all().order_by("?").first())
+
         return user
 
     def to_representation(self, instance):
@@ -58,22 +69,23 @@ class TherapistSerializer(serializers.ModelSerializer):
 
 class ProfileSerializer(serializers.ModelSerializer):
     user = UserSerializer(read_only=True)
+    days_left = serializers.SerializerMethodField(read_only=True)
 
     class Meta:
         model = UserProfile
-        fields = [
-            "id",
-            "user",
-            "role",
-            "photo",
-            "bio",
-        ]
+        fields = ["id", "user", "role", "photo", "bio", "days_left"]
 
     def get_photo(self, obj):
         request = self.context.get("request")
         if request:
             return request.build_absolute_uri(obj.photo.url)
         return obj.photo.url
+
+    def get_days_left(self, obj):
+        if obj.role == UserProfile.PATIENT:
+            patient = Patient.objects.get(profile=obj)
+            return (datetime.now().date() - patient.start_date).days
+        return 90
 
 
 class PatientSerializer(serializers.ModelSerializer):
@@ -85,7 +97,11 @@ class PatientSerializer(serializers.ModelSerializer):
         fields = "__all__"
 
     def get_profile(self, obj):
-        return ProfileSerializer(obj.profile, context={"request": self.context.get("request")}).data
+        return ProfileSerializer(
+            obj.profile, context={"request": self.context.get("request")}
+        ).data
 
     def get_doctors(self, obj):
-        return DoctorSerializer(obj.doctors, many=True, context={"request": self.context.get("request")}).data
+        return DoctorSerializer(
+            obj.doctors, many=True, context={"request": self.context.get("request")}
+        ).data
