@@ -82,10 +82,13 @@ class ProfileSerializer(serializers.ModelSerializer):
         return obj.photo.url
 
     def get_days_left(self, obj):
-        if obj.role == UserProfile.PATIENT:
-            patient = Patient.objects.get(profile=obj)
-            return (datetime.now().date() - patient.start_date).days
-        return 90
+        try:
+            if obj.role == UserProfile.PATIENT:
+                patient = Patient.objects.get(profile=obj)
+                return (datetime.now().date() - patient.start_date).days
+            return 90
+        except Patient.DoesNotExist:
+            return 90
 
 
 class PatientSerializer(serializers.ModelSerializer):
